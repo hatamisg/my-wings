@@ -7,15 +7,20 @@ CREATE TABLE IF NOT EXISTS projects (
   title VARCHAR(255) NOT NULL,
   slug VARCHAR(255) UNIQUE NOT NULL,
   description TEXT,
+  content TEXT, -- long content/markdown for detail page
   short_description VARCHAR(500),
   image_url TEXT,
   github_url TEXT,
   live_url TEXT,
   technologies TEXT[], -- Array of technologies
+  features TEXT[], -- Array of feature bullet points
+  screenshots TEXT[], -- Array of screenshot URLs (max 4 recommended)
   category VARCHAR(100),
   featured BOOLEAN DEFAULT false,
   status VARCHAR(50) DEFAULT 'published', -- draft, published, archived
   order_index INTEGER DEFAULT 0,
+  author VARCHAR(255) DEFAULT 'Hatami Sugandi',
+  published_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );

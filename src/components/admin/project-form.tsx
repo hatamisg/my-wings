@@ -49,6 +49,7 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
   const [title, setTitle] = useState(project?.title || '')
   const [slug, setSlug] = useState(project?.slug || '')
   const [description, setDescription] = useState(project?.description || '')
+  const [content, setContent] = useState(project?.content || '')
   const [shortDescription, setShortDescription] = useState(project?.short_description || '')
   const [imageUrl, setImageUrl] = useState(project?.image_url || '')
   const [githubUrl, setGithubUrl] = useState(project?.github_url || '')
@@ -59,6 +60,13 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
   const [featured, setFeatured] = useState(project?.featured || false)
   const [status, setStatus] = useState(project?.status || 'published')
   const [orderIndex, setOrderIndex] = useState(project?.order_index || 0)
+  const [author, setAuthor] = useState(project?.author || 'Hatami Sugandi')
+  const [publishedAt, setPublishedAt] = useState(
+    project?.published_at ? new Date(project.published_at).toISOString().slice(0,16) : ''
+  )
+  const [features, setFeatures] = useState<string[]>(project?.features || [])
+  const [newFeature, setNewFeature] = useState('')
+  const [screenshots, setScreenshots] = useState<string[]>(project?.screenshots || [])
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Auto-generate slug from title
@@ -94,15 +102,20 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
       formData.append('title', title)
       formData.append('slug', slug)
       formData.append('description', description)
+      formData.append('content', content)
       formData.append('short_description', shortDescription)
       formData.append('image_url', imageUrl)
       formData.append('github_url', githubUrl)
       formData.append('live_url', liveUrl)
-      technologies.forEach(tech => formData.append('technologies', tech))
+      technologies.filter(Boolean).forEach(tech => formData.append('technologies', tech))
+      features.filter(Boolean).forEach(f => formData.append('features', f))
+      screenshots.filter(Boolean).forEach(s => formData.append('screenshots', s))
       formData.append('category', category)
       formData.append('featured', featured ? 'on' : 'off')
       formData.append('status', status)
       formData.append('order_index', orderIndex.toString())
+      if (author) formData.append('author', author)
+      if (publishedAt) formData.append('published_at', new Date(publishedAt).toISOString())
 
       if (isEdit && project) {
         await updateProject(project.id, formData)
@@ -169,6 +182,17 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Detailed project description"
                   rows={6}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="content">Content</Label>
+                <Textarea
+                  id="content"
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  placeholder="Long content or markdown for the project detail page"
+                  rows={10}
                 />
               </div>
 
@@ -264,6 +288,85 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
               </div>
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Features</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex flex-wrap gap-2">
+                {features.map((f) => (
+                  <Badge key={f} variant="secondary" className="flex items-center gap-1">
+                    {f}
+                    <X className="h-3 w-3 cursor-pointer" onClick={() => setFeatures(features.filter(x => x !== f))} />
+                  </Badge>
+                ))}
+              </div>
+
+              <div className="flex gap-2">
+                <Input
+                  value={newFeature}
+                  onChange={(e) => setNewFeature(e.target.value)}
+                  placeholder="Add feature"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      if (newFeature && !features.includes(newFeature)) setFeatures([...features, newFeature])
+                      setNewFeature('')
+                    }
+                  }}
+                />
+                <Button type="button" size="sm" onClick={() => {
+                  if (newFeature && !features.includes(newFeature)) setFeatures([...features, newFeature])
+                  setNewFeature('')
+                }}>
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Screenshots (up to 4)</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {screenshots.map((url, idx) => (
+                  <div key={idx} className="relative">
+                    <ImageUpload
+                      value={url}
+                      onChange={(u) => {
+                        const next = [...screenshots]
+                        next[idx] = u
+                        setScreenshots(next)
+                      }}
+                      label={`Screenshot ${idx + 1}`}
+                      folder="projects/screenshots"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      className="mt-2"
+                      onClick={() => setScreenshots(screenshots.filter((_, i) => i !== idx))}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                ))}
+              </div>
+              {screenshots.length < 4 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setScreenshots([...screenshots, ''])}
+                >
+                  Add Screenshot
+                </Button>
+              )}
+            </CardContent>
+          </Card>
         </div>
 
         {/* Sidebar */}
@@ -273,6 +376,20 @@ export default function ProjectForm({ project, isEdit = false }: ProjectFormProp
               <CardTitle>Settings</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="author">Author</Label>
+                <Input id="author" value={author} onChange={(e) => setAuthor(e.target.value)} />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="published_at">Published At</Label>
+                <Input
+                  id="published_at"
+                  type="datetime-local"
+                  value={publishedAt}
+                  onChange={(e) => setPublishedAt(e.target.value)}
+                />
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="status">Status</Label>
                 <Select value={status} onValueChange={setStatus}>

@@ -15,15 +15,20 @@ export type Database = {
           title: string
           slug: string
           description: string | null
+          content: string | null
           short_description: string | null
           image_url: string | null
           github_url: string | null
           live_url: string | null
           technologies: string[] | null
+          features: string[] | null
+          screenshots: string[] | null
           category: string | null
           featured: boolean | null
           status: string | null
           order_index: number | null
+          author: string | null
+          published_at: string | null
           created_at: string | null
           updated_at: string | null
         }
@@ -32,15 +37,20 @@ export type Database = {
           title: string
           slug: string
           description?: string | null
+          content?: string | null
           short_description?: string | null
           image_url?: string | null
           github_url?: string | null
           live_url?: string | null
           technologies?: string[] | null
+          features?: string[] | null
+          screenshots?: string[] | null
           category?: string | null
           featured?: boolean | null
           status?: string | null
           order_index?: number | null
+          author?: string | null
+          published_at?: string | null
           created_at?: string | null
           updated_at?: string | null
         }
@@ -49,15 +59,20 @@ export type Database = {
           title?: string
           slug?: string
           description?: string | null
+          content?: string | null
           short_description?: string | null
           image_url?: string | null
           github_url?: string | null
           live_url?: string | null
           technologies?: string[] | null
+          features?: string[] | null
+          screenshots?: string[] | null
           category?: string | null
           featured?: boolean | null
           status?: string | null
           order_index?: number | null
+          author?: string | null
+          published_at?: string | null
           created_at?: string | null
           updated_at?: string | null
         }

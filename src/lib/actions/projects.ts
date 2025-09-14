@@ -12,15 +12,20 @@ const projectSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   slug: z.string().min(1, 'Slug is required').regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug must be lowercase with hyphens'),
   description: z.string().optional(),
+  content: z.string().optional(),
   short_description: z.string().optional(),
   image_url: z.string().url().optional().or(z.literal('')),
   github_url: z.string().url().optional().or(z.literal('')),
   live_url: z.string().url().optional().or(z.literal('')),
   technologies: z.array(z.string()).default([]),
+  features: z.array(z.string()).default([]),
+  screenshots: z.array(z.string().url()).default([]),
   category: z.string().optional(),
   featured: z.boolean().default(false),
   status: z.enum(['draft', 'published', 'archived']).default('published'),
   order_index: z.number().default(0),
+  author: z.string().optional(),
+  published_at: z.string().optional(),
 })
 
 // Get all projects (for admin)
@@ -125,15 +130,20 @@ export async function createProject(formData: FormData) {
     title: formData.get('title') as string,
     slug: formData.get('slug') as string,
     description: formData.get('description') as string,
+    content: formData.get('content') as string,
     short_description: formData.get('short_description') as string,
     image_url: formData.get('image_url') as string,
     github_url: formData.get('github_url') as string,
     live_url: formData.get('live_url') as string,
     technologies: formData.getAll('technologies') as string[],
+    features: formData.getAll('features') as string[],
+    screenshots: formData.getAll('screenshots') as string[],
     category: formData.get('category') as string,
     featured: formData.get('featured') === 'on',
     status: (formData.get('status') as ProjectStatus) || 'published',
     order_index: parseInt(formData.get('order_index') as string) || 0,
+    author: (formData.get('author') as string) || undefined,
+    published_at: (formData.get('published_at') as string) || undefined,
   }
 
   const validatedData = projectSchema.parse(rawData)
@@ -163,15 +173,20 @@ export async function updateProject(id: string, formData: FormData) {
     title: formData.get('title') as string,
     slug: formData.get('slug') as string,
     description: formData.get('description') as string,
+    content: formData.get('content') as string,
     short_description: formData.get('short_description') as string,
     image_url: formData.get('image_url') as string,
     github_url: formData.get('github_url') as string,
     live_url: formData.get('live_url') as string,
     technologies: formData.getAll('technologies') as string[],
+    features: formData.getAll('features') as string[],
+    screenshots: formData.getAll('screenshots') as string[],
     category: formData.get('category') as string,
     featured: formData.get('featured') === 'on',
     status: (formData.get('status') as ProjectStatus) || 'published',
     order_index: parseInt(formData.get('order_index') as string) || 0,
+    author: (formData.get('author') as string) || undefined,
+    published_at: (formData.get('published_at') as string) || undefined,
   }
 
   const validatedData = projectSchema.parse(rawData)

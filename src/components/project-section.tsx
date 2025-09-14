@@ -1,7 +1,7 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronRight, Github, ExternalLink } from "lucide-react";
+import { ChevronRight, ExternalLink } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -93,36 +93,19 @@ function ProjectCard({ project }: { project: Project }) {
         </div>
 
         <div className="flex gap-2 border-t border-dashed pt-4 mt-4">
+          <Button asChild variant="secondary" size="sm" className="gap-1 flex-1">
+            <Link href={`/projects/${project.slug}`}>
+              View Project
+              <ChevronRight className="h-3 w-3" />
+            </Link>
+          </Button>
           {project.live_url && (
-            <Button
-              asChild
-              variant="outline"
-              size="sm"
-              className="gap-1 flex-1"
-            >
+            <Button asChild variant="outline" size="sm" className="gap-1 flex-1">
               <Link href={project.live_url} target="_blank" rel="noreferrer">
                 <ExternalLink className="h-3 w-3" />
                 Live Demo
               </Link>
             </Button>
-          )}
-          {project.github_url && (
-            <Button
-              asChild
-              variant="outline"
-              size="sm"
-              className="gap-1 flex-1"
-            >
-              <Link href={project.github_url} target="_blank" rel="noreferrer">
-                <Github className="h-3 w-3" />
-                Code
-              </Link>
-            </Button>
-          )}
-          {!project.live_url && !project.github_url && (
-            <div className="text-center text-muted-foreground text-sm py-2 flex-1">
-              Links coming soon
-            </div>
           )}
         </div>
       </div>

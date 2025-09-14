@@ -52,9 +52,7 @@ export const HeroHeader = () => {
                 <Github />
               </a>
             </Button>
-            <Button asChild size="sm">
-              <Link href="/cv.pdf">CV / Resume</Link>
-            </Button>
+            
           </div>
         </div>
 
