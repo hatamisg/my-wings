@@ -1,82 +1,15 @@
 import * as React from "react";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import Image from "next/image";
+import { ChevronRight, Github, ExternalLink } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Gemini,
-  Replit,
-  MagicUI,
-  VSCodium,
-  MediaWiki,
-  GooglePaLM,
-} from "@/components/logos";
+import type { Project } from "@/types/database";
 
-export type Project = {
-  id: string;
-  name: string;
-  description: string;
-  href: string;
-  stack: string[];
-  logo: React.ReactNode;
-};
-
-export const DEFAULT_PROJECTS: Project[] = [
-  {
-    id: "gemini",
-    name: "Chat Assistant with Gemini",
-    description:
-      "Conversational AI assistant with tool-use and streaming UI built on Gemini.",
-    href: "https://github.com/hatamisg",
-    stack: ["Next.js", "TypeScript", "Shadcn UI", "Vercel"],
-    logo: <Gemini />,
-  },
-  {
-    id: "replit",
-    name: "Code Runner on Replit",
-    description:
-      "Instant code execution sandbox with persistent sessions and sharing.",
-    href: "https://replit.com/",
-    stack: ["Node.js", "WebSocket", "Prisma"],
-    logo: <Replit />,
-  },
-  {
-    id: "magicui",
-    name: "UI Kit using MagicUI",
-    description:
-      "Composable UI primitives and themes for fast app prototyping.",
-    href: "https://magicui.design/",
-    stack: ["React", "Tailwind", "CVA"],
-    logo: <MagicUI />,
-  },
-  {
-    id: "vscodium",
-    name: "Dev Environment Sync",
-    description:
-      "Portable editor setup with shared extensions and workspace templates.",
-    href: "https://vscodium.com/",
-    stack: ["VSCode", "Dotfiles", "CI"],
-    logo: <VSCodium />,
-  },
-  {
-    id: "mediawiki",
-    name: "Docs Hub with MediaWiki",
-    description: "Searchable documentation hub with custom templates and auth.",
-    href: "https://www.mediawiki.org/",
-    stack: ["PHP", "MySQL", "Nginx"],
-    logo: <MediaWiki />,
-  },
-  {
-    id: "palm",
-    name: "Knowledge Graph with PaLM",
-    description: "Entity extraction and graph explorer for research datasets.",
-    href: "https://ai.google/",
-    stack: ["Python", "Neo4j", "GCP"],
-    logo: <GooglePaLM />,
-  },
-];
+// Fallback projects for when no data is available
+export const FALLBACK_PROJECTS: Project[] = [];
 
 type ProjectSectionProps = {
   id?: string;
@@ -87,7 +20,7 @@ type ProjectSectionProps = {
 
 export default function ProjectSection({
   id = "projects",
-  projects = DEFAULT_PROJECTS,
+  projects = FALLBACK_PROJECTS,
   title = "Projects",
   subtitle = "Work that unites engineering discipline, thoughtful design, and creative impact.",
 }: ProjectSectionProps) {
@@ -103,9 +36,15 @@ export default function ProjectSection({
           </div>
 
           <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {projects.map((p) => (
-              <ProjectCard key={p.id} project={p} />
-            ))}
+            {projects.length > 0 ? (
+              projects.map((p) => (
+                <ProjectCard key={p.id} project={p} />
+              ))
+            ) : (
+              <div className="col-span-full text-center py-12">
+                <p className="text-muted-foreground">No projects available yet.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -117,34 +56,74 @@ function ProjectCard({ project }: { project: Project }) {
   return (
     <Card className="p-6">
       <div className="relative">
-        <div className="*:size-10">{project.logo}</div>
-
-        <div className="space-y-2 py-6">
-          <h3 className="text-base font-medium">{project.name}</h3>
-          <p className="text-muted-foreground line-clamp-2 text-sm">
-            {project.description}
-          </p>
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {project.stack.map((s) => (
-              <Badge key={s} variant="secondary">
-                {s}
-              </Badge>
-            ))}
+        {project.image_url ? (
+          <div className="w-full h-40 relative rounded-md overflow-hidden mb-4">
+            <Image
+              src={project.image_url}
+              alt={project.title}
+              fill
+              className="object-cover"
+            />
           </div>
+        ) : (
+          <div className="w-full h-40 bg-muted rounded-md mb-4 flex items-center justify-center">
+            <div className="text-muted-foreground text-sm">No image</div>
+          </div>
+        )}
+
+        <div className="space-y-2">
+          <h3 className="text-base font-medium">{project.title}</h3>
+          <p className="text-muted-foreground line-clamp-2 text-sm">
+            {project.short_description || project.description}
+          </p>
+          {project.technologies && project.technologies.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {project.technologies.slice(0, 4).map((tech) => (
+                <Badge key={tech} variant="secondary" className="text-xs">
+                  {tech}
+                </Badge>
+              ))}
+              {project.technologies.length > 4 && (
+                <Badge variant="outline" className="text-xs">
+                  +{project.technologies.length - 4}
+                </Badge>
+              )}
+            </div>
+          )}
         </div>
 
-        <div className="flex gap-3 border-t border-dashed pt-6">
-          <Button
-            asChild
-            variant="secondary"
-            size="sm"
-            className="gap-1 pr-2 shadow-none"
-          >
-            <Link href={project.href} target="_blank" rel="noreferrer">
-              View Project
-              <ChevronRight className="ml-0 !size-3.5 opacity-50" />
-            </Link>
-          </Button>
+        <div className="flex gap-2 border-t border-dashed pt-4 mt-4">
+          {project.live_url && (
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className="gap-1 flex-1"
+            >
+              <Link href={project.live_url} target="_blank" rel="noreferrer">
+                <ExternalLink className="h-3 w-3" />
+                Live Demo
+              </Link>
+            </Button>
+          )}
+          {project.github_url && (
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className="gap-1 flex-1"
+            >
+              <Link href={project.github_url} target="_blank" rel="noreferrer">
+                <Github className="h-3 w-3" />
+                Code
+              </Link>
+            </Button>
+          )}
+          {!project.live_url && !project.github_url && (
+            <div className="text-center text-muted-foreground text-sm py-2 flex-1">
+              Links coming soon
+            </div>
+          )}
         </div>
       </div>
     </Card>
