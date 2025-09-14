@@ -172,7 +172,7 @@ export default async function BlogsPage() {
                             <AlertDialogHeader>
                               <AlertDialogTitle>Delete Blog Post</AlertDialogTitle>
                               <AlertDialogDescription>
-                                Are you sure you want to delete "{blog.title}"? This action cannot be undone.
+                                Are you sure you want to delete {blog.title}? This action cannot be undone.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>

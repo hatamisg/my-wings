@@ -166,7 +166,7 @@ export default async function ProjectsPage() {
                             <AlertDialogHeader>
                               <AlertDialogTitle>Delete Project</AlertDialogTitle>
                               <AlertDialogDescription>
-                                Are you sure you want to delete "{project.title}"? This action cannot be undone.
+                                Are you sure you want to delete {project.title}? This action cannot be undone.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>

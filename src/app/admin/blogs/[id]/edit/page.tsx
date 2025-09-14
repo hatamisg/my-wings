@@ -28,9 +28,7 @@ export default async function EditBlogPage({ params }: EditBlogPageProps) {
         </Button>
         <div>
           <h1 className="text-3xl font-bold">Edit Post</h1>
-          <p className="text-muted-foreground">
-            Edit "{blog.title}"
-          </p>
+          <p className="text-muted-foreground">Edit: {blog.title}</p>
         </div>
       </div>
 
