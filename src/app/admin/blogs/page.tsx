@@ -176,13 +176,15 @@ export default async function BlogsPage() {
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction 
-                                onClick={() => deleteBlog(blog.id)}
-                                className="bg-red-500 hover:bg-red-600"
-                              >
-                                Delete
-                              </AlertDialogAction>
+                              <AlertDialogCancel type="button">Cancel</AlertDialogCancel>
+                              <form action={deleteBlog.bind(null, blog.id)}>
+                                <AlertDialogAction
+                                  type="submit"
+                                  className="bg-red-500 hover:bg-red-600"
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </form>
                             </AlertDialogFooter>
                           </AlertDialogContent>
                         </AlertDialog>

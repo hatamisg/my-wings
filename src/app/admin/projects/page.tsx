@@ -70,122 +70,133 @@ export default async function ProjectsPage() {
               </Button>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Project</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Technologies</TableHead>
-                  <TableHead>Links</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {projects.map((project) => (
-                  <TableRow key={project.id}>
-                    <TableCell>
-                      <div className="flex items-center space-x-3">
-                        {project.image_url && (
-                          <div className="w-12 h-12 relative rounded-md overflow-hidden">
-                            <Image
-                              src={project.image_url}
-                              alt={project.title}
-                              fill
-                              className="object-cover"
-                            />
-                          </div>
-                        )}
-                        <div>
-                          <div className="font-medium">{project.title}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {project.short_description}
+            <div className="w-full overflow-x-auto">
+              <Table className="table-fixed w-full">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[45%]">Project</TableHead>
+                    <TableHead className="w-[15%]">Status</TableHead>
+                    <TableHead className="w-[20%]">Technologies</TableHead>
+                    <TableHead className="w-[10%]">Links</TableHead>
+                    <TableHead className="w-[10%]">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {projects.map((project) => (
+                    <TableRow key={project.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-3 min-w-0">
+                          {project.image_url && (
+                            <div className="w-12 h-12 relative rounded-md overflow-hidden flex-shrink-0">
+                              <Image
+                                src={project.image_url}
+                                alt={project.title}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                          )}
+                          <div className="min-w-0">
+                            <div className="font-medium truncate" title={project.title}>
+                              {project.title}
+                            </div>
+                            {project.short_description && (
+                              <p
+                                className="text-sm text-muted-foreground break-words line-clamp-2"
+                                title={project.short_description}
+                              >
+                                {project.short_description}
+                              </p>
+                            )}
                           </div>
                         </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge 
-                        variant="secondary" 
-                        className={getStatusColor(project.status || 'draft')}
-                      >
-                        {project.status}
-                      </Badge>
-                      {project.featured && (
-                        <Badge variant="outline" className="ml-2">
-                          Featured
+                      </TableCell>
+                      <TableCell>
+                        <Badge 
+                          variant="secondary" 
+                          className={getStatusColor(project.status || 'draft')}
+                        >
+                          {project.status}
                         </Badge>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-wrap gap-1">
-                        {project.technologies?.slice(0, 3).map((tech) => (
-                          <Badge key={tech} variant="outline" className="text-xs">
-                            {tech}
-                          </Badge>
-                        ))}
-                        {(project.technologies?.length || 0) > 3 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{(project.technologies?.length || 0) - 3}
+                        {project.featured && (
+                          <Badge variant="outline" className="ml-2">
+                            Featured
                           </Badge>
                         )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        {project.live_url && (
-                          <Button variant="ghost" size="sm" asChild>
-                            <a href={project.live_url} target="_blank" rel="noopener noreferrer">
-                              <ExternalLink className="h-4 w-4" />
-                            </a>
-                          </Button>
-                        )}
-                        {project.github_url && (
-                          <Button variant="ghost" size="sm" asChild>
-                            <a href={project.github_url} target="_blank" rel="noopener noreferrer">
-                              <Github className="h-4 w-4" />
-                            </a>
-                          </Button>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        <Button variant="ghost" size="sm" asChild>
-                          <Link href={`/admin/projects/${project.id}/edit`}>
-                            <Edit className="h-4 w-4" />
-                          </Link>
-                        </Button>
-                        
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                              <Trash2 className="h-4 w-4 text-red-500" />
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-wrap gap-1">
+                          {project.technologies?.slice(0, 3).map((tech) => (
+                            <Badge key={tech} variant="outline" className="text-xs">
+                              {tech}
+                            </Badge>
+                          ))}
+                          {(project.technologies?.length || 0) > 3 && (
+                            <Badge variant="outline" className="text-xs">
+                              +{(project.technologies?.length || 0) - 3}
+                            </Badge>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          {project.live_url && (
+                            <Button variant="ghost" size="sm" asChild>
+                              <a href={project.live_url} target="_blank" rel="noopener noreferrer">
+                                <ExternalLink className="h-4 w-4" />
+                              </a>
                             </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Delete Project</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Are you sure you want to delete {project.title}? This action cannot be undone.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction 
-                                onClick={() => deleteProject(project.id)}
-                                className="bg-red-500 hover:bg-red-600"
-                              >
-                                Delete
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                          )}
+                          {project.github_url && (
+                            <Button variant="ghost" size="sm" asChild>
+                              <a href={project.github_url} target="_blank" rel="noopener noreferrer">
+                                <Github className="h-4 w-4" />
+                              </a>
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          <Button variant="ghost" size="sm" asChild>
+                            <Link href={`/admin/projects/${project.id}/edit`}>
+                              <Edit className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                          
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="ghost" size="sm">
+                                <Trash2 className="h-4 w-4 text-red-500" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Delete Project</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Are you sure you want to delete {project.title}? This action cannot be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel type="button">Cancel</AlertDialogCancel>
+                                <form action={deleteProject.bind(null, project.id)}>
+                                  <AlertDialogAction
+                                    type="submit"
+                                    className="bg-red-500 hover:bg-red-600"
+                                  >
+                                    Delete
+                                  </AlertDialogAction>
+                                </form>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>
